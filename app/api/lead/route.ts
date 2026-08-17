@@ -179,7 +179,7 @@ export async function POST(request: Request) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...lead,
-          phone: `${lead.dialCode} ${lead.mobile}`,
+          phone: `'${lead.dialCode} ${lead.mobile}`,
           submittedAt: new Date().toLocaleString('en-SG', { timeZone: 'Asia/Singapore' }),
         }),
         redirect: 'follow',
