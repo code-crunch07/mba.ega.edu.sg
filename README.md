@@ -17,7 +17,18 @@ npm run typecheck            # tsc --noEmit
 npm run lint                 # next lint
 ```
 
-Node 18.17+ required.
+## Docker
+
+```bash
+# Build Docker image
+docker build -t ega-mba-landing .
+
+# Run container on port 3000
+docker run -p 3000:3000 ega-mba-landing
+
+# Or using docker-compose
+docker compose up -d --build
+```
 
 ## Where things live
 
