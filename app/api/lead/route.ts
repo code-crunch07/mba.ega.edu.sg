@@ -170,6 +170,26 @@ export async function POST(request: Request) {
     }
   }
 
+  /* ------------------------------ Deliver to Google Sheets (Optional) */
+  const sheetWebhook = process.env.GOOGLE_SHEET_WEBHOOK_URL;
+  if (sheetWebhook) {
+    try {
+      await fetch(sheetWebhook, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...lead,
+          phone: `${lead.dialCode} ${lead.mobile}`,
+          submittedAt: new Date().toLocaleString('en-SG', { timeZone: 'Asia/Singapore' }),
+        }),
+        redirect: 'follow',
+      });
+      console.info('[lead] Successfully logged to Google Sheets');
+    } catch (error) {
+      console.error('[lead] Google Sheets webhook failed:', error);
+    }
+  }
+
   /* ------------------------------ Deliver via Webhook (Optional) */
   const webhook = process.env.LEAD_WEBHOOK_URL;
   if (webhook) {
@@ -184,8 +204,8 @@ export async function POST(request: Request) {
     }
   }
 
-  if (!brevoApiKey && !webhook) {
-    console.info('[lead] received (no BREVO_API_KEY or LEAD_WEBHOOK_URL set)', {
+  if (!brevoApiKey && !webhook && !sheetWebhook) {
+    console.info('[lead] received (no BREVO_API_KEY, GOOGLE_SHEET_WEBHOOK_URL or LEAD_WEBHOOK_URL set)', {
       fullname: lead.fullname,
       email: lead.email,
       mobile: `${lead.dialCode} ${lead.mobile}`,
