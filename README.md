@@ -23,8 +23,8 @@ npm run lint                 # next lint
 # Build Docker image
 docker build -t ega-mba-landing .
 
-# Run container on port 32 (host) -> 3000 (container)
-docker run -d -p 32:3000 --name ega-mba-app --restart always ega-mba-landing
+# Run container on port 3032 (host) -> 3000 (container)
+docker run -d -p 3032:3000 --name ega-mba-app --restart always ega-mba-landing
 
 # Or using docker-compose
 docker compose up -d --build
