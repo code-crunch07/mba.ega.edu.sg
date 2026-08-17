@@ -72,17 +72,105 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false, fields: errors }, { status: 422 });
   }
 
-  /*
-   * TODO — EGA: deliver the lead. Replace this block with whichever you use:
-   *
-   *   HubSpot   POST https://api.hsforms.com/submissions/v3/integration/submit/{portalId}/{formGuid}
-   *   Zoho CRM  POST https://www.zohoapis.com/crm/v5/Leads          (Bearer token)
-   *   Webhook   POST process.env.LEAD_WEBHOOK_URL
-   *   Email     Resend / SendGrid to admissions@ega.edu.sg
-   *
-   * Keep credentials in environment variables — never in client components.
-   * See .env.example.
-   */
+  /* ------------------------------ Deliver via Brevo API */
+  const brevoApiKey = process.env.BREVO_API_KEY;
+  if (brevoApiKey) {
+    try {
+      const senderEmail = process.env.BREVO_SENDER_EMAIL || process.env.EMAIL_FROM || 'admissions@ega.edu.sg';
+      const senderName = process.env.BREVO_SENDER_NAME || 'EGA MBA Portal';
+      const toEmail = process.env.BREVO_TO_EMAIL || process.env.EMAIL_TO || 'admissions@ega.edu.sg';
+
+      const emailList = toEmail.split(',').map((e) => ({ email: e.trim() }));
+
+      const htmlContent = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8">
+          <style>
+            body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #0C1420; margin: 0; padding: 20px; background-color: #FBF9F5; }
+            .card { background: #ffffff; border-radius: 12px; max-width: 600px; margin: 0 auto; padding: 28px; border: 1px solid #E3DED4; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+            h2 { color: #0C1420; margin-top: 0; font-size: 22px; border-bottom: 2px solid #9A6F28; padding-bottom: 12px; }
+            table { width: 100%; border-collapse: collapse; margin-top: 18px; }
+            th, td { text-align: left; padding: 12px 14px; font-size: 14.5px; border-bottom: 1px solid #F0ECE4; }
+            th { color: #4E5B6E; font-weight: 600; width: 38%; background-color: #F8F6F0; }
+            td { color: #0C1420; font-weight: 500; }
+            .badge { display: inline-block; background: #F6EEDF; color: #9A6F28; padding: 4px 10px; border-radius: 6px; font-weight: 600; font-size: 13px; }
+            .foot { margin-top: 24px; font-size: 12px; color: #7A8798; text-align: center; }
+          </style>
+        </head>
+        <body>
+          <div class="card">
+            <h2>🎓 New MBA Brochure & Enquiry Lead</h2>
+            <table>
+              <tr>
+                <th>Full Name</th>
+                <td><strong>${lead.fullname}</strong></td>
+              </tr>
+              <tr>
+                <th>Email</th>
+                <td><a href="mailto:${lead.email}">${lead.email}</a></td>
+              </tr>
+              <tr>
+                <th>Phone</th>
+                <td><a href="tel:${lead.dialCode}${lead.mobile}">${lead.dialCode} ${lead.mobile}</a></td>
+              </tr>
+              <tr>
+                <th>Country</th>
+                <td>${lead.country}</td>
+              </tr>
+              <tr>
+                <th>Qualification</th>
+                <td>${lead.qualification}</td>
+              </tr>
+              <tr>
+                <th>Management Experience</th>
+                <td>${lead.experience}</td>
+              </tr>
+              <tr>
+                <th>Study Mode</th>
+                <td><span class="badge">${lead.mode}</span></td>
+              </tr>
+              <tr>
+                <th>Submitted At</th>
+                <td>${new Date().toLocaleString('en-SG', { timeZone: 'Asia/Singapore' })} (SGT)</td>
+              </tr>
+            </table>
+            <div class="foot">
+              Educare Global Academy · Glasgow Caledonian University MBA
+            </div>
+          </div>
+        </body>
+        </html>
+      `;
+
+      const brevoRes = await fetch('https://api.brevo.com/v3/smtp/email', {
+        method: 'POST',
+        headers: {
+          'accept': 'application/json',
+          'content-type': 'application/json',
+          'api-key': brevoApiKey,
+        },
+        body: JSON.stringify({
+          sender: { name: senderName, email: senderEmail },
+          to: emailList,
+          subject: `🎓 New MBA Brochure Lead: ${lead.fullname}`,
+          htmlContent,
+        }),
+      });
+
+      if (!brevoRes.ok) {
+        const errBody = await brevoRes.text();
+        console.error('[lead] Brevo API error:', brevoRes.status, errBody);
+      } else {
+        console.info('[lead] Successfully delivered via Brevo to', toEmail);
+      }
+    } catch (error) {
+      console.error('[lead] Brevo delivery failed:', error);
+    }
+  }
+
+  /* ------------------------------ Deliver via Webhook (Optional) */
   const webhook = process.env.LEAD_WEBHOOK_URL;
   if (webhook) {
     try {
@@ -92,13 +180,15 @@ export async function POST(request: Request) {
         body: JSON.stringify({ ...lead, receivedAt: new Date().toISOString() }),
       });
     } catch (error) {
-      // Never fail the visitor's submission because a downstream system is down.
       console.error('[lead] webhook delivery failed', error);
     }
-  } else {
-    console.info('[lead] received (no LEAD_WEBHOOK_URL configured)', {
+  }
+
+  if (!brevoApiKey && !webhook) {
+    console.info('[lead] received (no BREVO_API_KEY or LEAD_WEBHOOK_URL set)', {
+      fullname: lead.fullname,
       email: lead.email,
-      country: lead.country,
+      mobile: `${lead.dialCode} ${lead.mobile}`,
     });
   }
 
