@@ -19,10 +19,9 @@ export const SITE = {
 
 export const IMAGES = {
   egaLogo: '/ega-logo.webp',
-  gcuLogo:
-    'https://mba.ega.edu.sg/wp-content/uploads/2025/11/GCU-Logo-with-strapline-svg-file_23404.svg',
+  gcuLogo: '/gcu-logo.svg',
   workplace: '/full-width.webp',
-  glasgowCampus: '/Quiet-Glasgow-campus_12487-2048x1366.webp',
+  glasgowCampus: '/glasgow-campus.webp',
   executiveLeader: '/125868.webp',
 } as const;
 
