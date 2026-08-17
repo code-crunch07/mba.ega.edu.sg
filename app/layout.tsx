@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next';
+import Script from 'next/script';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -33,31 +34,86 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <link rel="icon" href="/favicon-ega.png" type="image/png" sizes="any" />
         <link rel="apple-touch-icon" href="/favicon-ega.png" />
-        {/*
-          Loaded over the network rather than via next/font/google so the
-          project builds in environments without access to fonts.googleapis.com.
-          To self-host instead, delete these three tags and add to this file:
-
-            import { Noto_Serif } from 'next/font/google';
-            const noto = Noto_Serif({ subsets: ['latin'], weight: ['400','500','600','700'], style: ['normal','italic'], display: 'swap' });
-
-          then put `className={noto.className}` on <html> and set
-          `--font` in globals.css to `var(--next-font, inherit)`.
-        */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        {/*
-          `no-page-custom-font` targets the Pages Router, where a font added
-          outside _document.js loads per-page. This is the App Router root
-          layout, so the stylesheet is shared across every route already.
-        */}
         {/* eslint-disable-next-line @next/next/no-page-custom-font */}
         <link
-          href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,600&family=Jost:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap"
           rel="stylesheet"
         />
+
+        {/* ----------------- Google Site Tag (gtag.js) ----------------- */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=AW-18043790314"
+          strategy="afterInteractive"
+        />
+        <Script id="google-tag-init" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'AW-18043790314');
+          `}
+        </Script>
+
+        {/* ----------------- Meta Pixel Code ----------------- */}
+        <Script id="meta-pixel-init" strategy="afterInteractive">
+          {`
+            !function(f,b,e,v,n,t,s)
+            {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+            n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+            if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+            n.queue=[];t=b.createElement(e);t.async=!0;
+            t.src=v;s=b.getElementsByTagName(e)[0];
+            s.parentNode.insertBefore(t,s)}(window, document,'script',
+            'https://connect.facebook.net/en_US/fbevents.js');
+            fbq('init', '217923235645137');
+            fbq('track', 'PageView');
+          `}
+        </Script>
+
+        {/* ----------------- LinkedIn Insight Tag ----------------- */}
+        <Script id="linkedin-insight-init" strategy="afterInteractive">
+          {`
+            _linkedin_partner_id = "8962234";
+            window._linkedin_data_partner_ids = window._linkedin_data_partner_ids || [];
+            window._linkedin_data_partner_ids.push(_linkedin_partner_id);
+            (function(l) {
+            if (!l){window.lintrk = function(a,b){window.lintrk.q.push([a,b])};
+            window.lintrk.q=[]}
+            var s = document.getElementsByTagName("script")[0];
+            var b = document.createElement("script");
+            b.type = "text/javascript";b.async = true;
+            b.src = "https://snap.licdn.com/li.lms-analytics/insight.min.js";
+            s.parentNode.insertBefore(b, s);})(window.lintrk);
+          `}
+        </Script>
       </head>
-      <body>{children}</body>
+      <body>
+        {/* Meta Pixel Noscript */}
+        <noscript>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            height="1"
+            width="1"
+            style={{ display: 'none' }}
+            src="https://www.facebook.com/tr?id=217923235645137&ev=PageView&noscript=1"
+            alt=""
+          />
+        </noscript>
+        {/* LinkedIn Noscript */}
+        <noscript>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            height="1"
+            width="1"
+            style={{ display: 'none' }}
+            alt=""
+            src="https://px.ads.linkedin.com/collect/?pid=8962234&fmt=gif"
+          />
+        </noscript>
+        {children}
+      </body>
     </html>
   );
 }

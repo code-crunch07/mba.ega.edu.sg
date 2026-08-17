@@ -60,6 +60,22 @@ export default function LeadForm() {
         return;
       }
 
+      // Track conversions across Google Ads, Meta Pixel, and LinkedIn
+      if (typeof window !== 'undefined') {
+        if (typeof window.gtag === 'function') {
+          window.gtag('event', 'conversion', {
+            send_to: 'AW-18043790314/ok_WCJDlmpAcEOrH-ZtD',
+          });
+        }
+        if (typeof window.fbq === 'function') {
+          window.fbq('track', 'EGA_Register');
+          window.fbq('track', 'Lead');
+        }
+        if (typeof window.lintrk === 'function') {
+          window.lintrk('track', { conversion_id: 26855090 });
+        }
+      }
+
       setSent(true);
     } catch {
       // Network failure — tell the visitor rather than silently doing nothing.

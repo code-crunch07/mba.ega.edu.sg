@@ -5,3 +5,12 @@
  */
 declare module '*.css';
 declare module '*.scss';
+
+interface Window {
+  gtag?: (...args: any[]) => void;
+  dataLayer?: any[];
+  fbq?: (...args: any[]) => void;
+  _fbq?: any;
+  lintrk?: (...args: any[]) => void;
+  _linkedin_data_partner_ids?: any[];
+}
