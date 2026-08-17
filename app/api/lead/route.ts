@@ -80,7 +80,11 @@ export async function POST(request: Request) {
       const senderName = process.env.BREVO_SENDER_NAME || 'EGA MBA Portal';
       const toEmail = process.env.BREVO_TO_EMAIL || process.env.EMAIL_TO || 'admissions@ega.edu.sg';
 
-      const emailList = toEmail.split(',').map((e) => ({ email: e.trim() }));
+      const emailList = toEmail
+        .split(',')
+        .map((e) => e.trim())
+        .filter((e) => Boolean(e) && EMAIL_RE.test(e))
+        .map((email) => ({ email }));
 
       const htmlContent = `
         <!DOCTYPE html>
