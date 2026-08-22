@@ -3,6 +3,7 @@ import Script from 'next/script';
 import './globals.css';
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://mba.ega.edu.sg'),
   title: 'MBA in Singapore | Glasgow Caledonian University | Educare Global Academy',
   description:
     'A full UK Master of Business Administration, taught face-to-face in Singapore in twelve months at Educare Global Academy. 100% coursework, no examinations.',
@@ -15,8 +16,25 @@ export const metadata: Metadata = {
     title: 'Glasgow Caledonian University MBA — Singapore',
     description:
       'Twelve months. 100% coursework, no examinations. January, May and September intakes at Chinatown Point.',
-    type: 'website',
+    url: 'https://mba.ega.edu.sg',
+    siteName: 'Educare Global Academy',
     locale: 'en_SG',
+    type: 'website',
+    images: [
+      {
+        url: '/125868.webp',
+        width: 1200,
+        height: 630,
+        alt: 'Glasgow Caledonian University MBA Singapore',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Glasgow Caledonian University MBA — Singapore',
+    description:
+      'Twelve months. 100% coursework, no examinations. January, May and September intakes at Chinatown Point.',
+    images: ['/125868.webp'],
   },
   robots: { index: true, follow: true },
 };
@@ -41,7 +59,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,600&family=Jost:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap"
           rel="stylesheet"
         />
-
+      </head>
+      <body>
         {/* ----------------- Google Site Tag (gtag.js) ----------------- */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=AW-18043790314"
@@ -88,8 +107,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             s.parentNode.insertBefore(b, s);})(window.lintrk);
           `}
         </Script>
-      </head>
-      <body>
+
         {/* Meta Pixel Noscript */}
         <noscript>
           {/* eslint-disable-next-line @next/next/no-img-element */}
