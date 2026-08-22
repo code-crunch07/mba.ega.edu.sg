@@ -158,7 +158,7 @@ export function ImageBand() {
     <Reveal as="figure" className="fig fig-band">
       <Image
         src={IMAGES.workplace}
-        alt="Professionals collaborating in a Singapore workplace"
+        alt="Glasgow Caledonian University students on Glasgow campus"
         fill
         sizes="100vw"
       />

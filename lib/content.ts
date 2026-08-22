@@ -20,7 +20,7 @@ export const SITE = {
 export const IMAGES = {
   egaLogo: '/ega-logo.webp',
   gcuLogo: '/gcu-logo.svg',
-  workplace: '/full-width.webp',
+  workplace: '/students-campus.jpg',
   glasgowCampus: '/glasgow-campus.webp',
   executiveLeader: '/125868.webp',
 } as const;
